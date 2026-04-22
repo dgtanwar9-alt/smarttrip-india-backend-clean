@@ -24,16 +24,18 @@ dotenv.config();
 
 // Connect to database
 connectDB();
-
 const app = express();
 
 // Security and Middleware setup
 app.use(helmet());
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || '*', // Adjust in production
+    origin: [
+        'https://dgtanwar9-alt.github.io'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
