@@ -22,37 +22,39 @@ import packageRoutes from './routes/packageRoutes.js';
 // Load env vars
 dotenv.config();
 
-// Connect to database
+// Connect database
 connectDB();
+
 const app = express();
 
-// Security and Middleware setup
+// Security Middleware
 app.use(helmet());
+
 app.use(cors({
-    origin: [
-        'https://dgtanwar9-alt.github.io'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
+  origin: ['https://dgtanwar9-alt.github.io'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Logging
 if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
+  app.use(morgan('dev'));
 }
 
-// Rate limiting
+// Rate Limiter
 const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    standardHeaders: true, 
-    legacyHeaders: false,
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false
 });
+
 app.use('/api', apiLimiter);
 
-// Mount routes
+// Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
@@ -64,12 +66,23 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/packages', packageRoutes);
 
-// Error handling middleware
+// Root Route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Smart Trip Backend API Running'
+  });
+});
+
+// 404 + Error Middleware
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+// Server Start
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  console.log(
+    `Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`
+  );
 });
